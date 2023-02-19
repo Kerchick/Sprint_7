@@ -1,4 +1,5 @@
 import io.qameta.allure.junit4.DisplayName;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,7 +12,7 @@ import static steps.RegistrationCourierSteps.registerValidCourier;
 public class LoginCourierTest {
     @Before
     public void registrationData() {
-        courierLogin = "666775";
+        courierLogin = "666795";
         password = "1234";
         firstName = "КапитанГав";
     }
@@ -20,7 +21,7 @@ public class LoginCourierTest {
     public void validAuthorization(){
         registerValidCourier(courierLogin, password, firstName);
         validAuth(courierLogin, password);
-        deleteValidCourier(courierId);
+
     }
     @Test
     @DisplayName("Авторизация без логина")
@@ -32,16 +33,20 @@ public class LoginCourierTest {
     public void authorizationWithoutPassword(){
         invalidAuth("ninja","",400,"Недостаточно данных для входа");
     }
+
     @Test
-    @DisplayName("Авторизация с неверным логином")
-    public void authorizationInvalidLogin(){
-        invalidAuth("Sasori","Sasori223", 404, "Учетная запись не найдена");
-    }
-    @Test
-    @DisplayName("Авторизация с неверным паролем")
+    @DisplayName("Авторизация с неверным логином/паролем")
     public void authorizationInvalidPassword(){
-        invalidAuth("OGBuda","420", 404, "Учетная запись не найдена");
-
+        invalidAuth("OGBuda","Kashel420", 404, "Учетная запись не найдена");
     }
 
+
+    @After
+    public void deleteCourier(){
+        if (courierId != null) {
+            deleteValidCourier(courierId);
+        } else {
+            deleteValidCourier(null,500, "invalid input syntax for type integer: \"null\"" );
+        }
+    }
 }

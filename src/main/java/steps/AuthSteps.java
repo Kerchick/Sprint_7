@@ -9,6 +9,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static io.restassured.RestAssured.given;
 
 public class AuthSteps extends Configuration {
+    final static String apiV1CourierLogin= "api/v1/courier/login";
 
     @Step("Валидная авторизация")
     public static void validAuth(String login, String password) {
@@ -20,7 +21,7 @@ public class AuthSteps extends Configuration {
                 .spec(sendHeader)
                 .body(auth)
                 .when()
-                .post(url + "api/v1/courier/login")
+                .post(url + apiV1CourierLogin)
                 .then()
                 .spec(ok200)
                 .body("id", notNullValue())
@@ -35,14 +36,16 @@ public class AuthSteps extends Configuration {
         AuthHelp auth = new AuthHelp();
         auth.Auth(login, password);
 
-        given().log().all()
-                .spec(sendHeader)
+          courierId =  given().log().all()
+                 .spec(sendHeader)
                 .body(auth)
                 .when()
-                .post(url + "api/v1/courier/login")
+                .post(url + apiV1CourierLogin)
                 .then()
                 .body("code", equalTo(expectedCode))
-                .body("message", equalTo(expectedMessage));
+                .body("message", equalTo(expectedMessage))
+                .extract().jsonPath().getString("id");
+
 
     }
 }

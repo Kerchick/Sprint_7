@@ -9,7 +9,9 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
+
 public class RegistrationCourierSteps extends Configuration {
+     final static String apiV1Courier = "api/v1/courier/";
 
     @Step("Регистрация курьера с валидными данными")
     public static void registerValidCourier(String login, String password, String firstName) {
@@ -21,9 +23,9 @@ public class RegistrationCourierSteps extends Configuration {
                 .spec(sendHeader)
                 .body(auth)
                 .when()
-                .post(url + "api/v1/courier/")
+                .post(url + apiV1Courier)
                 .then()
-                .spec(ok201)
+                 .spec(ok201)
                 .body("ok", notNullValue())
                 .extract().jsonPath().getString("id");
     }
@@ -35,14 +37,15 @@ public class RegistrationCourierSteps extends Configuration {
         RegistrationCourierHelp auth = new RegistrationCourierHelp();
         auth.Registration(login, password, firstName);
 
-        given().log().all()
+        courierId = given().log().all()
                 .spec(sendHeader)
                 .body(auth)
                 .when()
-                .post(url + "api/v1/courier/")
+                .post(url + apiV1Courier)
                 .then()
                 .body("code", equalTo(expectedCode))
-                .body("message", equalTo(expectedMessage));
+                .body("message", equalTo(expectedMessage))
+                .extract().jsonPath().getString("id");
     }
 
 }
